@@ -14,6 +14,8 @@ import Formulario from '@/components/Formulario.vue';
 import Tarefa from '@/components/Tarefa.vue';
 import ITarefa from '@/interfaces/ITarefa';
 import Box from '@/components/Box.vue';
+import { useStore } from '@/store';
+import { ADICIONA_TAREFA } from '@/store/tipo-mutacoes';
 
 
 export default defineComponent({
@@ -25,21 +27,31 @@ export default defineComponent({
     },
     data() {
         return {
-            tarefas: [] as ITarefa[],
             modoEscuro: false,
         }
     },
     computed: {
         listaVazia(): boolean {
-            return this.tarefas.length == 0;
+            console.log('listaVazia', this.store.state.tarefas.length);
+            return this.store.state.tarefas.length == 0;
+        },
+        tarefas(): ITarefa[] {
+            console.log('tarefas', this.store.state.tarefas);
+            return this.store.state.tarefas;
         }
     },
     methods: {
         salvarTarefa(tarefa: ITarefa) {
-            this.tarefas.push(tarefa);
+            this.store.commit(ADICIONA_TAREFA,tarefa);
         },
         trocarTema(modoEscuro: boolean) {
             this.modoEscuro = modoEscuro;
+        }
+    },
+    setup() {
+        const store =  useStore()
+        return {
+            store
         }
     }
 });
