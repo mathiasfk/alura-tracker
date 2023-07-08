@@ -28,6 +28,8 @@ import ITarefa from '@/interfaces/ITarefa';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { computed } from '@vue/reactivity';
+import { TipoNotificacao } from '@/interfaces/INotificacao';
+import { NOTIFICAR } from '@/store/tipo-mutacoes';
 
 export default defineComponent({
     name: "Formulario",
@@ -43,6 +45,16 @@ export default defineComponent({
     },
     methods: {
         finalizarTarefa(tempoDecorrido: number) : void {
+            const projeto = this.projetos.find(p => p.id == this.idProjeto);
+
+            if(!projeto){
+                this.commit(NOTIFICAR, {
+                    titulo: 'Tarefa sem projeto',
+                    texto: 'A tarefa precisa de um projeto associado para ser salva.',
+                    tipo: TipoNotificacao.ATENCAO,
+                });
+                return;
+            }
             this.$emit('aoSalvarTarefa',{
                 duracaoEmSegundos: tempoDecorrido,
                 descricao: this.descricao,
@@ -54,6 +66,7 @@ export default defineComponent({
     setup() {
         const store = useStore(key);
         return {
+            commit: store.commit,
             projetos: computed(() => store.state.projetos)
         }
     }
