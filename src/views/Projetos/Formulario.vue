@@ -23,8 +23,9 @@
 
 <script lang="ts">
 import { TipoNotificacao } from '@/interfaces/INotificacao';
+import { notificacaoMixin } from '@/mixins/notificar';
 import { useStore } from '@/store';
-import { ALTERA_PROJETO, ADICIONA_PROJETO, NOTIFICAR } from '@/store/tipo-mutacoes';
+import { ALTERA_PROJETO, ADICIONA_PROJETO } from '@/store/tipo-mutacoes';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -34,6 +35,7 @@ export default defineComponent({
             type: String
         }
     },
+    mixins: [notificacaoMixin],
     mounted() {
         if(this.id) {
             const projeto = this.store.state.projetos.find(p => p.id == this.id);
@@ -56,13 +58,9 @@ export default defineComponent({
                 this.store.commit(ADICIONA_PROJETO,this.nomeDoProjeto);
             }
             this.nomeDoProjeto = '';
-            this.store.commit(NOTIFICAR, {
-                titulo: 'Projeto salvo',
-                texto: 'Seu novo projeto foi salvo com sucesso!',
-                tipo: TipoNotificacao.SUCESSO,
-            })
+            this.notificar(TipoNotificacao.SUCESSO, 'Projeto salvo', 'Seu novo projeto foi salvo com sucesso!');
             this.$router.push('/projetos');
-        }
+        },
     },
     setup() {
         const store =  useStore()

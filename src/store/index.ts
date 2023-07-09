@@ -46,7 +46,7 @@ export const store = createStore<Estado>({
                 state.notificacoes = state.notificacoes.filter(n => n.id != novaNotificacao.id);
             }, 3000)
         }
-    }
+    },
 })
 
 export function useStore(): Store<Estado> {
