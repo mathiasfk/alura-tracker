@@ -29,7 +29,7 @@ import { useStore } from 'vuex';
 import { key } from '@/store';
 import { computed } from '@vue/reactivity';
 import { TipoNotificacao } from '@/interfaces/INotificacao';
-import { NOTIFICAR } from '@/store/tipo-mutacoes';
+import useNotificador from '@/hooks/notificador';
 
 export default defineComponent({
     name: "Formulario",
@@ -48,12 +48,7 @@ export default defineComponent({
             const projeto = this.projetos.find(p => p.id == this.idProjeto);
 
             if(!projeto){
-                this.commit(NOTIFICAR, {
-                    titulo: 'Tarefa sem projeto',
-                    texto: 'A tarefa precisa de um projeto associado para ser salva.',
-                    tipo: TipoNotificacao.ATENCAO,
-                });
-                return;
+                this.notificar(TipoNotificacao.ATENCAO, 'Tarefa sem projeto', 'A tarefa foi salva sem nenhum projeto associado.');
             }
             this.$emit('aoSalvarTarefa',{
                 duracaoEmSegundos: tempoDecorrido,
@@ -65,8 +60,9 @@ export default defineComponent({
     },
     setup() {
         const store = useStore(key);
+        const { notificar } = useNotificador();
         return {
-            commit: store.commit,
+            notificar,
             projetos: computed(() => store.state.projetos)
         }
     }
